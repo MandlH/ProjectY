@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: yws_db
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+    ports:
+      - "5432:5432"
