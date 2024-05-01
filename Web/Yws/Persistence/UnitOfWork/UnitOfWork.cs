@@ -7,17 +7,17 @@ namespace Persistence.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly RepositoryDbContext _repositoryDbContext;
+        private readonly ApplicationDbContext _applicationDbContext;
 
         private IDbContextTransaction? _transaction;
 
-        public UnitOfWork(RepositoryDbContext repositoryDbContext) => _repositoryDbContext = repositoryDbContext;
+        public UnitOfWork(ApplicationDbContext applicationDbContext) => _applicationDbContext = applicationDbContext;
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                return _repositoryDbContext.SaveChangesAsync(cancellationToken);
+                return _applicationDbContext.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateException ex)
             {
@@ -52,7 +52,7 @@ namespace Persistence.UnitOfWork
 
         public void BeginTransaction()
         {
-            _transaction = _repositoryDbContext.Database.BeginTransaction();
+            _transaction = _applicationDbContext.Database.BeginTransaction();
         }
     }
 }

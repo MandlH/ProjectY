@@ -1,14 +1,15 @@
-﻿using System.Reflection;
-using Api.Middlewares;
+﻿using Api.Middlewares;
 using Domain.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
-using Persistence.Database;
 using Persistence.Repository;
 using Services.Abstractions;
 using Services;
 using Persistence.UnitOfWork;
+using Domain.Entities;
+using Domain.Identity;
+using Persistence.Database;
 
 namespace Api
 {
@@ -36,14 +37,19 @@ namespace Api
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
-            var t = Configuration.GetConnectionString("Database");
-
-            services.AddDbContextPool<RepositoryDbContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("Database"));
-            });
+            ConfigureDatabase(services);
 
             services.AddTransient<ExceptionHandlingMiddleware>();
+        }
+
+        public void ConfigureDatabase(IServiceCollection services)
+        { 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("ApplicationDatabaseDebug"), x => x.MigrationsAssembly("Api")));
+
+            services.AddIdentity<User, ApplicationRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

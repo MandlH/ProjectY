@@ -7,39 +7,39 @@ namespace Persistence.Repository
 {
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        protected RepositoryDbContext RepositoryContext { get; set; }
+        protected ApplicationDbContext ApplicationContext { get; set; }
         protected IUnitOfWork UnitOfWork { get; set; }
 
-        public RepositoryBase(RepositoryDbContext repositoryContext, IUnitOfWork unitOfWork)
+        public RepositoryBase(ApplicationDbContext applicationContext, IUnitOfWork unitOfWork)
         {
-            RepositoryContext = repositoryContext;
+            ApplicationContext = applicationContext;
             UnitOfWork = unitOfWork;
         }
 
         public IQueryable<T> FindAll()
         {
-            return RepositoryContext.Set<T>().AsNoTracking();
+            return ApplicationContext.Set<T>().AsNoTracking();
         }
 
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
-            return RepositoryContext.Set<T>()
+            return ApplicationContext.Set<T>()
                 .Where(expression).AsNoTracking();
         }
 
         public void Create(T entity)
         {
-            RepositoryContext.Set<T>().Add(entity);
+            ApplicationContext.Set<T>().Add(entity);
         }
 
         public void Update(T entity)
         {
-            RepositoryContext.Set<T>().Update(entity);
+            ApplicationContext.Set<T>().Update(entity);
         }
 
         public void Delete(T entity)
         {
-            RepositoryContext.Set<T>().Remove(entity);
+            ApplicationContext.Set<T>().Remove(entity);
         }
     }
 }

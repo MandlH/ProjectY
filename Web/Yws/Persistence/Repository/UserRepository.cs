@@ -7,8 +7,8 @@ namespace Persistence.Repository
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        public UserRepository(RepositoryDbContext repositoryContext, IUnitOfWork unitOfWork)
-            : base(repositoryContext, unitOfWork)
+        public UserRepository(ApplicationDbContext applicationContext, IUnitOfWork unitOfWork)
+            : base(applicationContext, unitOfWork)
         {
         }
 
@@ -20,7 +20,7 @@ namespace Persistence.Repository
 
         public async Task<User> GetUserByIdAsync(Guid ownerId)
         {
-            return await FindByCondition(owner => owner.Id.Equals(ownerId))
+            return await FindByCondition(user => user.Id.Equals(ownerId))
                 .FirstOrDefaultAsync();
         }
     }
